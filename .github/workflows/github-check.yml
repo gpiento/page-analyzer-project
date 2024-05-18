@@ -45,9 +45,11 @@ jobs:
             ${{ runner.os }}-java-dependencies-
 
       - name: Build with Gradle
-        uses: gradle/actions/setup-gradle@v3
-        working-directory: app
-        run: ./gradlew build
+        uses: gradle/gradle-build-action@v3
+        with:
+            gradle-version: 8.7
+            arguments: build
+            build-root-directory: ${{github.workspace}}/app
 
       - name: Check for build errors
         if: ${{ failure() }}
