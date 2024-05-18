@@ -1,5 +1,3 @@
-### Hexlet tests and linter status:
-[![Actions Status](https://github.com/gpiento/java-project-72/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/gpiento/java-project-72/actions)
 ## Анализатор страниц
 [![hexlet-check](https://github.com/gpiento/java-project-72/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/gpiento/java-project-72/actions/workflows/hexlet-check.yml)
 [![GitHub Workflow Status](https://github.com//gpiento/java-project-72/actions/workflows/github-check.yml/badge.svg)](https://github.com/gpiento/java-project-72/actions)
