@@ -6,6 +6,7 @@ COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
 COPY gradlew .
+COPY config/checkstyle/checkstyle.xml config/checkstyle/checkstyle.xml
 
 COPY src src
 
