@@ -1,5 +1,5 @@
 FROM openjdk:21-slim
-COPY . .
+COPY . /app
 WORKDIR /app
 RUN ./gradlew --no-daemon shadowJar
 #COPY /app/build/libs/app-1.0-SNAPSHOT-all.jar /
