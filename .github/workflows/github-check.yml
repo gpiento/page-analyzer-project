@@ -29,7 +29,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build with Gradle
-        build-root-directory: ${{github.workspace}}/app
         run: ./gradlew --warning-mode=fail build
 
       - name: Check for build errors
