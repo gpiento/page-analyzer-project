@@ -2,6 +2,7 @@ package hexlet.code;
 
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
+import okhttp3.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ class AppTest {
     void testMainPage() throws Exception {
 
         JavalinTest.test(app, (server, client) -> {
-            var response = client.get("/");
+            Response response = client.get("/");
             assertThat(response.code()).isEqualTo(200);
         });
     }

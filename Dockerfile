@@ -1,6 +1,6 @@
 FROM gradle:8.7.0-jdk21 as builder
 WORKDIR /app
-COPY . .
+COPY /app .
 RUN ./gradlew --no-daemon shadowJar
 
 FROM openjdk:21-slim
