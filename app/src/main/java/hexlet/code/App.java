@@ -31,9 +31,6 @@ public final class App {
                 "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1");
         hikariConfig.setJdbcUrl(dbUrl);
 
-        System.out.println("SYSTEM VAR: " + System.getenv("JDBC_DATABASE_URL"));
-        System.out.println("USE DB: " + dbUrl);
-
         log.info("USE DB: {}", dbUrl);
 
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
