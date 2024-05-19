@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: your-app-name
+    env: java
+    buildCommand: ./gradlew shadowJar
+    startCommand: java -jar build/libs/app-1.0-SNAPSHOT-all.jar
+    envVars:
+      - key: JAVA_OPTS
+        value: -Xmx512M
+      - key: PORT
+        value: 7070
