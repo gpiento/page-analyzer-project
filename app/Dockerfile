@@ -3,7 +3,7 @@ WORKDIR /app
 COPY . .
 RUN ./gradlew --no-daemon shadowJar
 
-FROM openjdk:21-jre-slim
+FROM openjdk:21-slim
 WORKDIR /app
 COPY --from=builder /app/build/libs/app-1.0-SNAPSHOT-all.jar ./
 ENV JAVA_OPTS "-Xmx512M -Xms512M"
