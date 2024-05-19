@@ -1,11 +1,9 @@
 FROM gradle:8.7.0-jdk21
 
-WORKDIR /
+ENV JAVA_OPTS=""
 
-COPY / .
-
-RUN ./gradlew installDist
+COPY build/libs/app-1.0-SNAPSHOT-all.jar app-1.0-SNAPSHOT-all.jar
 
 EXPOSE 7070
 
-CMD ./build/install/app/bin/app
+ENTRYPOINT ["java","-jar","/app-1.0-SNAPSHOT-all.jar"]
