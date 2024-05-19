@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -24,21 +25,23 @@ public final class App {
         return Integer.parseInt(port);
     }
 
-    public static Javalin getApp() {
+    private static String readResourceFile(final String fileName) throws IOException {
+        InputStream inputStream = App.class.getClassLoader().getResourceAsStream(fileName);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            return reader.lines().collect(Collectors.joining("\n"));
+        }
+    }
 
-        HikariConfig hikariConfig = new HikariConfig();
+    public static Javalin getApp() throws IOException, SQLException {
+
         String dbUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL",
                 "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1");
+        HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(dbUrl);
-
-        log.info("USE DB: {}", dbUrl);
+//        hikariConfig.setDriverClassName("org.h2.Driver");
 
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
-
-        InputStream url = App.class.getClassLoader()
-                .getResourceAsStream("schema.sql");
-        String sql = new BufferedReader(new InputStreamReader(url))
-                .lines().collect(Collectors.joining("\n"));
+        String sql = readResourceFile("schema.sql");
 
         log.info(sql);
         try (Connection connection = dataSource.getConnection();
@@ -59,7 +62,7 @@ public final class App {
         return app;
     }
 
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException, SQLException {
         Javalin app = getApp();
         app.start(getPort());
     }
