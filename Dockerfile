@@ -1,6 +1,6 @@
 FROM openjdk:21-slim
+COPY . /app
 WORKDIR /app
-COPY . /
 RUN ./gradlew --no-daemon shadowJar
 #COPY /app/build/libs/app-1.0-SNAPSHOT-all.jar /
 ENV JAVA_OPTS "-Xmx512M -Xms512M"
