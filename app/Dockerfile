@@ -3,8 +3,8 @@ FROM gradle:8.7.0-jdk21
 WORKDIR /app
 
 COPY gradle gradle
-COPY build.gradle.kts .
-COPY settings.gradle.kts .
+COPY build.gradle .
+COPY settings.gradle .
 COPY gradlew .
 
 COPY src src
