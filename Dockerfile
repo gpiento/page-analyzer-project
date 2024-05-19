@@ -1,7 +1,5 @@
-FROM openjdk:21-slim
-RUN ls -l
+FROM eclipse-temurin:21-jdk
 WORKDIR /app
-RUN ls -l
 RUN ./gradlew --no-daemon shadowJar
 CMD ls -l
 COPY /app/build/libs/app-1.0-SNAPSHOT-all.jar /
