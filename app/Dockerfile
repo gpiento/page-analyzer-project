@@ -2,7 +2,7 @@ FROM gradle:8.7.0-jdk21
 
 WORKDIR /app
 
-COPY /app .
+COPY / .
 #COPY app/gradle gradle
 #COPY app/build.gradle .
 #COPY app/settings.gradle .
