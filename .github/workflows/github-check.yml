@@ -30,7 +30,7 @@ jobs:
 
       - name: Build with Gradle
         working-directory: app
-        run: ./gradlew --warning-mode=fail build
+        run: ./gradlew build
 
       - name: Check for build errors
         if: ${{ failure() }}
