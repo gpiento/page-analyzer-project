@@ -11,6 +11,6 @@ public class MainPage {
     private String currentUser;
 
     public Boolean isVisited() {
-            return visited;
+        return visited;
     }
 }
