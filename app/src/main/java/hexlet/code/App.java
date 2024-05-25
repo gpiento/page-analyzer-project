@@ -5,7 +5,9 @@ import com.zaxxer.hikari.HikariDataSource;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
+import hexlet.code.controller.RootController;
 import hexlet.code.repository.BaseRepository;
+import hexlet.code.utils.NamedRoutes;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,6 +26,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public final class App {
 
+    private static boolean isDeveloperMachine() {
+        String developerEnv = System.getenv("DEVELOPER_MACHINE");
+        return developerEnv != null && developerEnv.equalsIgnoreCase("true");
+    }
+
     private static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "7070");
         return Integer.parseInt(port);
@@ -30,23 +38,35 @@ public final class App {
 
     private static String readResourceFile(final String fileName) throws IOException {
         InputStream inputStream = App.class.getClassLoader().getResourceAsStream(fileName);
+        if (inputStream == null) {
+            return "Resource file not found: " + fileName;
+        }
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             return reader.lines().collect(Collectors.joining("\n"));
+        } catch (IOException e) {
+            return "Error reading resource file: " + fileName;
         }
     }
 
     private static TemplateEngine createTemplateEngine() {
         ClassLoader classLoader = App.class.getClassLoader();
         ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
-        return TemplateEngine.create(codeResolver, ContentType.Html);
+        Path preCompileDirectory = Path.of("src/main/resources/jte-classes");
+        TemplateEngine templateEngine;
+        if (isDeveloperMachine()) {
+            templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
+        } else {
+            templateEngine = TemplateEngine.createPrecompiled(preCompileDirectory, ContentType.Html);
+        }
+        return templateEngine;
     }
 
     public static Javalin getApp() throws IOException, SQLException {
         String dbUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL",
                 "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1");
+        log.info("JDBC_DATABASE_URL: {}", dbUrl);
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(dbUrl);
-//        hikariConfig.setDriverClassName("org.h2.Driver");
 
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
         String sql = readResourceFile("schema.sql");
@@ -56,6 +76,7 @@ public final class App {
              Statement statement = connection.createStatement()) {
             statement.execute(sql);
         }
+
         BaseRepository.dataSource = dataSource;
 
         Javalin app = Javalin.create(config -> {
@@ -63,7 +84,7 @@ public final class App {
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
 
-        app.get("/", ctx -> ctx.result("Hello, World!"));
+        app.get(NamedRoutes.rootPath(), RootController::index);
 
         return app;
     }
