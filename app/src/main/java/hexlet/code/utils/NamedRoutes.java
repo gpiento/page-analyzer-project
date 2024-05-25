@@ -6,8 +6,8 @@ public class NamedRoutes {
         return "/";
     }
 
-    public static String productsPath() {
-        return "/products";
+    public static String urlsPath() {
+        return "/urls";
     }
 
     public static String buildProductPath() {

@@ -9,13 +9,13 @@ import java.util.List;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
-public class RootController {
+public class UrlsController {
 
     public static void index(final Context ctx) {
         List<Url> urlList = new ArrayList<>();
         urlList.add(new Url(1L, "https://hexlet.io"));
         urlList.add(new Url(2L, "https://hexlet.com"));
         UrlsPage page = new UrlsPage(urlList);
-        ctx.render("index.jte", model("page", page));
+        ctx.render("urls/index.jte", model("page", page));
     }
 }

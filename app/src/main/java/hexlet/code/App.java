@@ -7,6 +7,7 @@ import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.controller.RootController;
 import hexlet.code.repository.BaseRepository;
+import hexlet.code.repository.UrlsRepository;
 import hexlet.code.utils.NamedRoutes;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
@@ -77,6 +78,7 @@ public final class App {
         });
 
         app.get(NamedRoutes.rootPath(), RootController::index);
+        app.get(NamedRoutes.urlsPath(), UrlsRepository::index);
 
         return app;
     }
