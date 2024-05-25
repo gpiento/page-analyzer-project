@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -51,14 +50,7 @@ public final class App {
     private static TemplateEngine createTemplateEngine() {
         ClassLoader classLoader = App.class.getClassLoader();
         ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
-        Path preCompileDirectory = Path.of("src/main/resources/jte-classes");
-        TemplateEngine templateEngine;
-        if (isDeveloperMachine()) {
-            templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
-        } else {
-            templateEngine = TemplateEngine.createPrecompiled(preCompileDirectory, ContentType.Html);
-        }
-        return templateEngine;
+        return TemplateEngine.create(codeResolver, ContentType.Html);
     }
 
     public static Javalin getApp() throws IOException, SQLException {
