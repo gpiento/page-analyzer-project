@@ -79,6 +79,7 @@ public final class App {
 
         app.get(NamedRoutes.rootPath(), RootController::index);
         app.get(NamedRoutes.urlsPath(), UrlsRepository::index);
+        app.post(NamedRoutes.urlsPath(), UrlsRepository::create);
 
         return app;
     }
