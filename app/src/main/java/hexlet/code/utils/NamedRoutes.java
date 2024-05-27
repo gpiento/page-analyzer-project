@@ -10,16 +10,7 @@ public class NamedRoutes {
         return "/urls";
     }
 
-    public static String buildProductPath() {
-        return "/products/build";
+    public static String urlPath(String id) {
+        return urlsPath() + "/" + id;
     }
-
-    public static String productPath(Long id) {
-        return productPath(String.valueOf(id));
-    }
-
-    public static String productPath(String id) {
-        return "/products/" + id;
-    }
-
 }

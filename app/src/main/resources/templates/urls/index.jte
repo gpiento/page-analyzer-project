@@ -1,4 +1,7 @@
-@import hexlet.code.utils.NamedRoutes;
+@import hexlet.code.dto.urls.UrlsPage
+@import hexlet.code.model.Url
+@import hexlet.code.utils.NamedRoutes
+@param UrlsPage page
 
 @template.layout.page(
 content = @`
@@ -15,18 +18,20 @@ content = @`
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>
-                    1
-                </td>
-                <td>
-                    <a href="/urls/1">https://java-page-analyzer-ru.hexlet.app</a>
-                </td>
-                <td>
-                </td>
-                <td>
-                </td>
-            </tr>
+            @for(Url url : page.getUrls())
+                <tr>
+                    <td>
+                        ${url.getId()}
+                    </td>
+                    <td>
+                        <a href="${NamedRoutes.urlPath(url.getId().toString())}">${url.getName()}</a>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            @endfor
             </tbody>
         </table>
     </div>

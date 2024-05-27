@@ -1,25 +1,27 @@
-@import hexlet.code.utils.NamedRoutes;
 @import hexlet.code.dto.urls.UrlPage
+@import java.time.format.DateTimeFormatter
 @param UrlPage page
+
+!{var formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");}
 
 @template.layout.page(
 content = @`
     <div class="container-lg mt-5">
-        <h1>Сайт: https://www.youtube.com</h1>
+        <h1>Сайт: ${page.getUrl().getName()}</h1>
 
         <table class="table table-bordered table-hover mt-3">
             <tbody>
             <tr>
                 <td>ID</td>
-                <td>2</td>
+                <td>${page.getUrl().getId()}</td>
             </tr>
             <tr>
                 <td>Имя</td>
-                <td>https://www.youtube.com</td>
+                <td>${page.getUrl().getName()}</td>
             </tr>
             <tr>
                 <td>Дата создания</td>
-                <td>25/05/2024 15:04</td>
+                <td>${page.getUrl().getCreatedAt().toLocalDateTime().format(formatter)}</td>
             </tr>
             </tbody>
         </table>

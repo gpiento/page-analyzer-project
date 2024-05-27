@@ -6,8 +6,8 @@ import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.controller.RootController;
+import hexlet.code.controller.UrlsController;
 import hexlet.code.repository.BaseRepository;
-import hexlet.code.repository.UrlsRepository;
 import hexlet.code.utils.NamedRoutes;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
@@ -25,11 +25,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public final class App {
-
-    private static boolean isDeveloperMachine() {
-        String developerEnv = System.getenv("DEVELOPER_MACHINE");
-        return developerEnv != null && developerEnv.equalsIgnoreCase("true");
-    }
 
     private static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "7070");
@@ -78,13 +73,15 @@ public final class App {
         });
 
         app.get(NamedRoutes.rootPath(), RootController::index);
-        app.get(NamedRoutes.urlsPath(), UrlsRepository::index);
-        app.post(NamedRoutes.urlsPath(), UrlsRepository::create);
+        app.get(NamedRoutes.urlsPath(), UrlsController::index);
+        app.post(NamedRoutes.urlsPath(), UrlsController::create);
+        app.get(NamedRoutes.urlPath("{id}"), UrlsController::show);
 
         return app;
     }
 
-    public static void main(final String[] args) throws IOException, SQLException {
+    public static void main(final String[] args)
+            throws IOException, SQLException {
         Javalin app = getApp();
         app.start(getPort());
     }

@@ -5,7 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-//todo: remove AllArgsConstructor
+import java.sql.Timestamp;
+
 @AllArgsConstructor
 @Getter
 @Setter
@@ -13,7 +14,15 @@ import lombok.ToString;
 public final class Url {
 
     private Long id;
-
-    @ToString.Include
     private String name;
+    private Timestamp createdAt;
+
+    public Url(final String name) {
+        this.name = name;
+    }
+
+    public Url(final String name, final Timestamp createdAt) {
+        this.name = name;
+        this.createdAt = createdAt;
+    }
 }
