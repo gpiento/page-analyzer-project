@@ -9,8 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class AppTest {
 
@@ -81,5 +85,51 @@ class AppTest {
         Url url = new Url("http://example.com:8080");
         UrlsRepository.save(url);
         assertThat(UrlsRepository.existsByName("http://example.com:8080")).isTrue();
+    }
+
+    @Test
+    public void testUrlWithName() {
+        String name = "http://example.com";
+        Url url = new Url(name);
+        assertNull(url.getId());
+        assertEquals(name, url.getName());
+        assertNull(url.getCreatedAt());
+    }
+
+    @Test
+    public void testUrlWithNameAndCreatedAt() {
+        String name = "http://example.com";
+        Timestamp createdAt = Timestamp.from(Instant.now());
+        Url url = new Url(name, createdAt);
+        assertNull(url.getId());
+        assertEquals(name, url.getName());
+        assertEquals(createdAt, url.getCreatedAt());
+    }
+
+    @Test
+    public void testUrlSetters() {
+        Long id = 1L;
+        String name = "http://example.com";
+        Timestamp createdAt = Timestamp.from(Instant.now());
+        Url url = new Url(name);
+
+        url.setId(id);
+        url.setName(name);
+        url.setCreatedAt(createdAt);
+
+        assertEquals(id, url.getId());
+        assertEquals(name, url.getName());
+        assertEquals(createdAt, url.getCreatedAt());
+    }
+
+    @Test
+    public void testUrlToString() {
+        Long id = 1L;
+        String name = "http://example.com";
+        Timestamp createdAt = Timestamp.from(Instant.now());
+        Url url = new Url(id, name, createdAt);
+
+        String expectedString = "Url(id=" + id + ", name=" + name + ", createdAt=" + createdAt + ")";
+        assertEquals(expectedString, url.toString());
     }
 }

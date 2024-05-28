@@ -30,6 +30,7 @@ public class UrlsController {
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
         ctx.render("urls/show.jte", model("page", page));
+        ctx.render("urls/show.jte", Collections.singletonMap("page", page));
     }
 
     public static void create(final Context ctx)
