@@ -57,6 +57,7 @@ public final class App {
         hikariConfig.setJdbcUrl(dbUrl);
 
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
+        BaseRepository.dataSource = dataSource;
         String sql = readResourceFile("schema.sql");
 
         log.info(sql);
@@ -64,8 +65,6 @@ public final class App {
              Statement statement = connection.createStatement()) {
             statement.execute(sql);
         }
-
-        BaseRepository.dataSource = dataSource;
 
         Javalin app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
@@ -76,6 +75,7 @@ public final class App {
         app.get(NamedRoutes.urlsPath(), UrlsController::index);
         app.post(NamedRoutes.urlsPath(), UrlsController::create);
         app.get(NamedRoutes.urlPath("{id}"), UrlsController::show);
+        app.post(NamedRoutes.urlCheckPath("{id}"), UrlsController::check);
 
         return app;
     }

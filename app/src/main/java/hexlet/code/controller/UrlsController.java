@@ -68,4 +68,40 @@ public class UrlsController {
         }
         ctx.redirect(NamedRoutes.urlsPath());
     }
+
+    public static void check(final Context ctx)
+            throws URISyntaxException, SQLException {
+        String inputUrl = ctx.formParam("url");
+        if (inputUrl == null || inputUrl.isEmpty()) {
+            ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.sessionAttribute("flashType", "error");
+            ctx.redirect(NamedRoutes.rootPath());
+            return;
+        }
+        URI parseUrl;
+        try {
+            parseUrl = new URI(inputUrl);
+        } catch (URISyntaxException e) {
+            ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.sessionAttribute("flashType", "error");
+            ctx.redirect(NamedRoutes.rootPath());
+            return;
+        }
+        String normalUrl = String.format(
+                "%s://%s%s",
+                parseUrl.getScheme() == null ? "http" : parseUrl.getScheme(),
+                parseUrl.getHost(),
+                parseUrl.getPort() == -1 ? "" : ":" + parseUrl.getPort()
+        ).toLowerCase();
+        if (UrlsRepository.existsByName(normalUrl)) {
+            ctx.sessionAttribute("flash", "Страница уже существует");
+            ctx.sessionAttribute("flash-type", "warning");
+        } else {
+            Url urlEntity = new Url(normalUrl);
+            UrlsRepository.save(urlEntity);
+            ctx.sessionAttribute("flash", "Страница успешно добавлена");
+            ctx.sessionAttribute("flash-type", "success");
+        }
+        ctx.redirect(NamedRoutes.urlsPath());
+    }
 }
