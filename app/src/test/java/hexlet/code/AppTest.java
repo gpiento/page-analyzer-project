@@ -5,6 +5,8 @@ import hexlet.code.repository.UrlsRepository;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.Response;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,10 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class AppTest {
 
     private Javalin app;
+    private MockWebServer mockWebServer;
 
     @BeforeEach
     public void setUp() throws Exception {
         app = App.getApp();
+
+        mockWebServer = new MockWebServer();
+        mockWebServer.start();
     }
 
     @Test
@@ -127,7 +133,7 @@ class AppTest {
         Long id = 1L;
         String name = "http://example.com";
         Timestamp createdAt = Timestamp.from(Instant.now());
-        Url url = new Url(id, name, createdAt);
+        var url = new Url(id, name, createdAt);
 
         String expectedString = "Url(id=" + id + ", name=" + name + ", createdAt=" + createdAt + ")";
         assertEquals(expectedString, url.toString());
