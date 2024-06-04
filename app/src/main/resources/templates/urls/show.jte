@@ -1,4 +1,5 @@
 @import hexlet.code.dto.urls.UrlPage
+@import hexlet.code.model.UrlCheck
 @import java.time.format.DateTimeFormatter
 @param UrlPage page
 
@@ -42,7 +43,28 @@ content = @`
             <th class="col-2">Дата проверки</th>
             </thead>
             <tbody>
-
+            @for(UrlCheck urlCheck : page.getUrlCheckList())
+                <tr>
+                    <td>
+                        ${urlCheck.getUrlId()}
+                    </td>
+                    <td>
+                        ${urlCheck.getStatusCode()}
+                    </td>
+                    <td>
+                        ${urlCheck.getTitle()}
+                    </td>
+                    <td>
+                        ${urlCheck.getH1()}
+                    </td>
+                    <td>
+                        ${urlCheck.getDescription()}
+                    </td>
+                    <td>
+                        ${urlCheck.getCreatedAt().toLocalDateTime().format(formatter)}
+                    </td>
+                </tr>
+            @endfor
             </tbody>
         </table>
     </div>

@@ -31,7 +31,8 @@ public class UrlsController {
         long id = ctx.pathParamAsClass("id", Long.class).get();
         Url url = UrlsRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
-        UrlPage page = new UrlPage(url);
+        List<UrlCheck> urlCheck = UrlCheckRepository.getEntities(id);
+        UrlPage page = new UrlPage(url, urlCheck);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
         ctx.render("urls/show.jte", Collections.singletonMap("page", page));
@@ -71,8 +72,8 @@ public class UrlsController {
     public static void check(final Context ctx)
             throws URISyntaxException, SQLException {
 
-        String id = ctx.pathParam("id");
-        List<UrlCheck> urlChecks = UrlCheckRepository.getEntities(Long.parseLong(id));
+        long id = ctx.pathParamAsClass("id", Long.class).get();
+        List<UrlCheck> urlChecks = UrlCheckRepository.getEntities(id);
         ctx.sessionAttribute("flash", "Страница успешно проверена");
         ctx.sessionAttribute("flash-type", "success");
         ctx.redirect(NamedRoutes.urlsPath() + "/" + id);
