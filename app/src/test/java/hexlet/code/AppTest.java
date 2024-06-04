@@ -5,11 +5,10 @@ import hexlet.code.repository.UrlsRepository;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.Response;
-import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -21,14 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class AppTest {
 
     private Javalin app;
-    private MockWebServer mockWebServer;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() throws IOException, SQLException {
         app = App.getApp();
-
-        mockWebServer = new MockWebServer();
-        mockWebServer.start();
     }
 
     @Test
@@ -45,16 +40,17 @@ class AppTest {
         JavalinTest.test(app, (server, client) -> {
             Response response = client.get("/urls");
             assertThat(response.code()).isEqualTo(200);
+            assertThat(response.body().string()).contains("Сайты");
         });
     }
 
     @Test
     public void testCreateUrl() {
         JavalinTest.test(app, (server, client) -> {
-            String requestBody = "url=http://example.com:8080";
+            String requestBody = "url=http://example.com:1234";
             Response response = client.post("/urls", requestBody);
             assertThat(response.code()).isEqualTo(200);
-            assertThat(response.body().string()).contains("http://example.com:8080");
+            assertThat(response.body().string()).contains("http://example.com:1234");
         });
     }
 
@@ -133,7 +129,7 @@ class AppTest {
         Long id = 1L;
         String name = "http://example.com";
         Timestamp createdAt = Timestamp.from(Instant.now());
-        var url = new Url(id, name, createdAt);
+        Url url = new Url(id, name, createdAt);
 
         String expectedString = "Url(id=" + id + ", name=" + name + ", createdAt=" + createdAt + ")";
         assertEquals(expectedString, url.toString());

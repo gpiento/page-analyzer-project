@@ -10,8 +10,10 @@ import hexlet.code.utils.NamedRoutes;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
@@ -26,8 +28,8 @@ public class UrlsController {
 
     public static void show(final Context ctx) throws SQLException {
 
-        String id = ctx.pathParam("id");
-        Url url = UrlsRepository.find(Long.parseLong(id))
+        long id = ctx.pathParamAsClass("id", Long.class).get();
+        Url url = UrlsRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
         UrlPage page = new UrlPage(url);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
@@ -39,16 +41,10 @@ public class UrlsController {
             throws URISyntaxException, SQLException {
 
         String inputUrl = ctx.formParam("url");
-        if (inputUrl == null || inputUrl.isEmpty()) {
-            ctx.sessionAttribute("flash", "Некорректный URL");
-            ctx.sessionAttribute("flashType", "error");
-            ctx.redirect(NamedRoutes.rootPath());
-            return;
-        }
-        URI parseUrl;
+        URL parseUrl;
         try {
-            parseUrl = new URI(inputUrl);
-        } catch (URISyntaxException e) {
+            parseUrl = new URI(inputUrl.trim().toLowerCase()).toURL();
+        } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flashType", "error");
             ctx.redirect(NamedRoutes.rootPath());
@@ -56,16 +52,16 @@ public class UrlsController {
         }
         String normalUrl = String.format(
                 "%s://%s%s",
-                parseUrl.getScheme() == null ? "http" : parseUrl.getScheme(),
+                parseUrl.getProtocol() == null ? "http" : parseUrl.getProtocol(),
                 parseUrl.getHost(),
                 parseUrl.getPort() == -1 ? "" : ":" + parseUrl.getPort()
-        ).toLowerCase();
+        );
         if (UrlsRepository.existsByName(normalUrl)) {
             ctx.sessionAttribute("flash", "Страница уже существует");
             ctx.sessionAttribute("flash-type", "warning");
         } else {
-            Url urlEntity = new Url(normalUrl);
-            UrlsRepository.save(urlEntity);
+            Url url = new Url(normalUrl);
+            UrlsRepository.save(url);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
             ctx.sessionAttribute("flash-type", "success");
         }
