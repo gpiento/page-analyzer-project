@@ -1,6 +1,7 @@
 package hexlet.code.repository;
 
 import hexlet.code.model.UrlCheck;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,15 +11,18 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+@Slf4j
 public class UrlCheckRepository extends BaseRepository {
 
-    public static void save(UrlCheck urlCheck) throws SQLException {
+    public static UrlCheck save(UrlCheck urlCheck) throws SQLException {
+
         String sql = "INSERT INTO url_checks (url_id, status_code, h1, title, description) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql,
                      Statement.RETURN_GENERATED_KEYS)) {
+
+            log.info("urlCheck: {}", urlCheck);
             preparedStatement.setLong(1, urlCheck.getUrlId());
             preparedStatement.setInt(2, urlCheck.getStatusCode());
             preparedStatement.setString(3, urlCheck.getH1());
@@ -27,18 +31,21 @@ public class UrlCheckRepository extends BaseRepository {
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
+                log.info("generatedKeys: {}", generatedKeys.getLong(1));
                 urlCheck.setId(generatedKeys.getLong(1));
-                urlCheck.setCreatedAt(generatedKeys.getTimestamp(7));
+                return urlCheck;
             } else {
                 throw new SQLException("DB have not returned an id after saving an entity");
             }
         }
     }
 
-    public static List<UrlCheck> getEntities(final Long urlId) throws SQLException {
+    public static List<UrlCheck> getEntities(Long urlId) throws SQLException {
+
         String sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY create_at DESC";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setLong(1, urlId);
             ResultSet resultSet = stmt.executeQuery();
 
@@ -57,22 +64,22 @@ public class UrlCheckRepository extends BaseRepository {
         }
     }
 
-    public static Map<Long, UrlCheck> findLastChecks() throws SQLException {
-        String sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY create_at DESC LIMIT 10";
+    public static UrlCheck findLastChecks() throws SQLException {
+
+        String sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY create_at DESC LIMIT 1";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             ResultSet resultSet = stmt.executeQuery();
-            Map<Long, UrlCheck> result = new java.util.LinkedHashMap<>();
+            UrlCheck result = new UrlCheck();
             while (resultSet.next()) {
-                Long id = resultSet.getLong("id");
-                Long urlId = resultSet.getLong("url_id");
-                int statusCode = resultSet.getInt("status_code");
-                String h1 = resultSet.getString("h1");
-                String title = resultSet.getString("title");
-                String description = resultSet.getString("description");
-                Timestamp createdAt = resultSet.getTimestamp("create_at");
-                UrlCheck urlCheck = new UrlCheck(id, urlId, statusCode, h1, title, description, createdAt);
-                result.put(urlId, urlCheck);
+                result.setId(resultSet.getLong("id"));
+                result.setUrlId(resultSet.getLong("url_id"));
+                result.setStatusCode(resultSet.getInt("status_code"));
+                result.setH1(resultSet.getString("h1"));
+                result.setTitle(resultSet.getString("title"));
+                result.setDescription(resultSet.getString("description"));
+                result.setCreatedAt(resultSet.getTimestamp("create_at"));
             }
             return result;
         }

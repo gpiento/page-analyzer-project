@@ -9,6 +9,11 @@ import hexlet.code.repository.UrlsRepository;
 import hexlet.code.utils.NamedRoutes;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import kong.unirest.core.HttpResponse;
+import kong.unirest.core.Unirest;
+import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -18,6 +23,7 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 public class UrlsController {
 
     public static void index(final Context ctx) throws SQLException {
@@ -31,7 +37,9 @@ public class UrlsController {
         long id = ctx.pathParamAsClass("id", Long.class).get();
         Url url = UrlsRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
+        log.info("SHOW - url: {}", url);
         List<UrlCheck> urlCheck = UrlCheckRepository.getEntities(id);
+        log.info("SHOW - urlCheck: {}", urlCheck);
         UrlPage page = new UrlPage(url, urlCheck);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
@@ -39,13 +47,14 @@ public class UrlsController {
     }
 
     public static void create(final Context ctx)
-            throws URISyntaxException, SQLException {
+            throws SQLException {
 
         String inputUrl = ctx.formParam("url");
         URL parseUrl;
         try {
             parseUrl = new URI(inputUrl.trim().toLowerCase()).toURL();
-        } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
+        } catch (URISyntaxException | MalformedURLException
+                 | IllegalArgumentException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flashType", "error");
             ctx.redirect(NamedRoutes.rootPath());
@@ -70,10 +79,42 @@ public class UrlsController {
     }
 
     public static void check(final Context ctx)
-            throws URISyntaxException, SQLException {
+            throws SQLException {
 
         long id = ctx.pathParamAsClass("id", Long.class).get();
-        List<UrlCheck> urlChecks = UrlCheckRepository.getEntities(id);
+
+        Url url = UrlsRepository.find(id)
+                .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
+
+        HttpResponse<String> httpResponse = null;
+        try {
+            httpResponse = Unirest.get(url.getName()).asString();
+        } catch (Exception e) {
+            ctx.sessionAttribute("flash", "Страница не проверена");
+            ctx.sessionAttribute("flash-type", "error");
+            ctx.redirect(NamedRoutes.urlsPath() + "/" + id);
+            return;
+        }
+        int statusCode = httpResponse.getStatus();
+        String body = httpResponse.getBody();
+        Document document = Jsoup.parse(body);
+        String h1 = document.select("h1").text();
+        String title = document.title();
+        String description = document.select("meta[name=description]").attr("content");
+
+        log.info("CHECKING: {}", url.getName());
+        log.info("statusCode: {}", statusCode);
+        log.info("h1: {}", h1);
+        log.info("title: {}", title);
+        log.info("description: {}", description);
+
+        UrlCheck urlCheck = new UrlCheck(statusCode, h1, title, description);
+        urlCheck.setUrlId(id);
+        log.info("URLCheck: {}", urlCheck);
+        UrlCheck savedUrlCheck = UrlCheckRepository.save(urlCheck);
+        log.info("URLCheck saved: {}", savedUrlCheck);
+        log.info("URLCheck saved");
+
         ctx.sessionAttribute("flash", "Страница успешно проверена");
         ctx.sessionAttribute("flash-type", "success");
         ctx.redirect(NamedRoutes.urlsPath() + "/" + id);
