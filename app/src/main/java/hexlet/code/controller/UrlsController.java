@@ -37,9 +37,7 @@ public class UrlsController {
         long id = ctx.pathParamAsClass("id", Long.class).get();
         Url url = UrlsRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
-        log.info("SHOW - url: {}", url);
         List<UrlCheck> urlCheck = UrlCheckRepository.getEntities(id);
-        log.info("SHOW - urlCheck: {}", urlCheck);
         UrlPage page = new UrlPage(url, urlCheck);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
@@ -102,18 +100,9 @@ public class UrlsController {
         String title = document.title();
         String description = document.select("meta[name=description]").attr("content");
 
-        log.info("CHECKING: {}", url.getName());
-        log.info("statusCode: {}", statusCode);
-        log.info("h1: {}", h1);
-        log.info("title: {}", title);
-        log.info("description: {}", description);
-
         UrlCheck urlCheck = new UrlCheck(statusCode, h1, title, description);
         urlCheck.setUrlId(id);
-        log.info("URLCheck: {}", urlCheck);
         UrlCheck savedUrlCheck = UrlCheckRepository.save(urlCheck);
-        log.info("URLCheck saved: {}", savedUrlCheck);
-        log.info("URLCheck saved");
 
         ctx.sessionAttribute("flash", "Страница успешно проверена");
         ctx.sessionAttribute("flash-type", "success");

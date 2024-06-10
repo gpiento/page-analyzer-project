@@ -22,7 +22,6 @@ public class UrlCheckRepository extends BaseRepository {
              PreparedStatement preparedStatement = conn.prepareStatement(sql,
                      Statement.RETURN_GENERATED_KEYS)) {
 
-            log.info("urlCheck: {}", urlCheck);
             preparedStatement.setLong(1, urlCheck.getUrlId());
             preparedStatement.setInt(2, urlCheck.getStatusCode());
             preparedStatement.setString(3, urlCheck.getH1());
@@ -31,7 +30,6 @@ public class UrlCheckRepository extends BaseRepository {
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                log.info("generatedKeys: {}", generatedKeys.getLong(1));
                 urlCheck.setId(generatedKeys.getLong(1));
                 return urlCheck;
             } else {
@@ -59,27 +57,6 @@ public class UrlCheckRepository extends BaseRepository {
                 Timestamp createdAt = resultSet.getTimestamp("create_at");
                 UrlCheck urlCheck = new UrlCheck(id, urlId, statusCode, h1, title, description, createdAt);
                 result.add(urlCheck);
-            }
-            return result;
-        }
-    }
-
-    public static UrlCheck findLastChecks() throws SQLException {
-
-        String sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY create_at DESC LIMIT 1";
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            ResultSet resultSet = stmt.executeQuery();
-            UrlCheck result = new UrlCheck();
-            while (resultSet.next()) {
-                result.setId(resultSet.getLong("id"));
-                result.setUrlId(resultSet.getLong("url_id"));
-                result.setStatusCode(resultSet.getInt("status_code"));
-                result.setH1(resultSet.getString("h1"));
-                result.setTitle(resultSet.getString("title"));
-                result.setDescription(resultSet.getString("description"));
-                result.setCreatedAt(resultSet.getTimestamp("create_at"));
             }
             return result;
         }

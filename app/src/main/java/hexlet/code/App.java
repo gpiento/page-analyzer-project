@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.stream.Collectors;
@@ -50,6 +51,8 @@ public final class App {
     }
 
     public static Javalin getApp() throws IOException, SQLException {
+        DriverManager.registerDriver(new org.postgresql.Driver());
+        DriverManager.registerDriver(new org.h2.Driver());
         String dbUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL",
                 "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1");
         log.info("JDBC_DATABASE_URL: {}", dbUrl);
