@@ -15,6 +15,7 @@ class UrlCheckRepositoryTest {
 
     @Test
     void save() {
+
     }
 
     @Test

@@ -32,6 +32,11 @@ public final class App {
         return Integer.parseInt(port);
     }
 
+    private static boolean isDevelopmentMode() {
+        String developmentMode = System.getenv().getOrDefault("DEVELOPMENT_MODE", "false");
+        return Boolean.parseBoolean(developmentMode);
+    }
+
     private static String readResourceFile(final String fileName) throws IOException {
         InputStream inputStream = App.class.getClassLoader().getResourceAsStream(fileName);
         if (inputStream == null) {
@@ -51,19 +56,29 @@ public final class App {
     }
 
     public static Javalin getApp() throws IOException, SQLException {
-        DriverManager.registerDriver(new org.postgresql.Driver());
-        DriverManager.registerDriver(new org.h2.Driver());
-        String dbUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL",
-                "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1");
-        log.info("JDBC_DATABASE_URL: {}", dbUrl);
+
+        log.info("DEVELOPMENT_MODE: {}", isDevelopmentMode());
+        String dbUrl = "";
         HikariConfig hikariConfig = new HikariConfig();
+
+        if (isDevelopmentMode()) {
+            DriverManager.registerDriver(new org.h2.Driver());
+            dbUrl = "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1";
+        } else {
+            DriverManager.registerDriver(new org.postgresql.Driver());
+            dbUrl = System.getenv("JDBC_DATABASE_URL");
+            hikariConfig.setUsername(System.getenv("JDBC_DATABASE_USERNAME"));
+            hikariConfig.setPassword(System.getenv("JDBC_DATABASE_PASSWORD"));
+        }
+
+        log.info("JDBC_DATABASE_URL: {}", dbUrl);
         hikariConfig.setJdbcUrl(dbUrl);
 
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
         BaseRepository.dataSource = dataSource;
         String sql = readResourceFile("schema.sql");
 
-        log.info(sql);
+        log.info("SQL: {}", sql);
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement()) {
             statement.execute(sql);
