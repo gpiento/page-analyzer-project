@@ -6,8 +6,7 @@
 
 !{var formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");}
 
-@template.layout.page(
-content = @`
+@template.layout.page(page = page, content = @`
     <div class="container-lg mt-5">
         <h1>Сайт: ${page.getUrl().getName()}</h1>
 

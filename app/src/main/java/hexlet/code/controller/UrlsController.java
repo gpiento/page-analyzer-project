@@ -54,7 +54,7 @@ public class UrlsController {
         } catch (URISyntaxException | MalformedURLException
                  | IllegalArgumentException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
-            ctx.sessionAttribute("flashType", "error");
+            ctx.sessionAttribute("flashType", "alert-danger");
             ctx.redirect(NamedRoutes.rootPath());
             return;
         }
@@ -66,14 +66,16 @@ public class UrlsController {
         );
         if (UrlsRepository.existsByName(normalUrl)) {
             ctx.sessionAttribute("flash", "Страница уже существует");
-            ctx.sessionAttribute("flash-type", "warning");
+            ctx.sessionAttribute("flash-type", "alert-danger");
+            ctx.redirect(NamedRoutes.rootPath());
+            return;
         } else {
             Url url = new Url(normalUrl);
             UrlsRepository.save(url);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
-            ctx.sessionAttribute("flash-type", "success");
+            ctx.sessionAttribute("flash-type", "alert-success");
+            ctx.redirect(NamedRoutes.urlsPath());
         }
-        ctx.redirect(NamedRoutes.urlsPath());
     }
 
     public static void check(final Context ctx)
@@ -89,7 +91,7 @@ public class UrlsController {
             httpResponse = Unirest.get(url.getName()).asString();
         } catch (Exception e) {
             ctx.sessionAttribute("flash", "Страница не проверена");
-            ctx.sessionAttribute("flash-type", "error");
+            ctx.sessionAttribute("flash-type", "alert-danger");
             ctx.redirect(NamedRoutes.urlsPath() + "/" + id);
             return;
         }
@@ -105,7 +107,7 @@ public class UrlsController {
         UrlCheck savedUrlCheck = UrlCheckRepository.save(urlCheck);
 
         ctx.sessionAttribute("flash", "Страница успешно проверена");
-        ctx.sessionAttribute("flash-type", "success");
+        ctx.sessionAttribute("flash-type", "alert-success");
         ctx.redirect(NamedRoutes.urlsPath() + "/" + id);
     }
 }

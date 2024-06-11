@@ -3,8 +3,7 @@
 @import hexlet.code.utils.NamedRoutes
 @param UrlsPage page
 
-@template.layout.page(
-content = @`
+@template.layout.page(page = page, content = @`
     <div class="container-lg mt-5">
         <h1>Сайты</h1>
 

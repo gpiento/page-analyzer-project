@@ -1,7 +1,8 @@
-@import hexlet.code.utils.NamedRoutes;
+@import hexlet.code.utils.NamedRoutes
+@import hexlet.code.dto.BasePage
+@param BasePage page
 
-@template.layout.page(
-content = @`
+@template.layout.page(page = page, content = @`
     <div class="container-fluid bg-dark p-5">
         <div class="row">
             <div class="col-md-10 col-lg-8 mx-auto text-white">
@@ -31,5 +32,4 @@ content = @`
             </div>
         </div>
     </div>
-`
-)
+`)

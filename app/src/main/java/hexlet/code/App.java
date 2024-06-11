@@ -78,7 +78,7 @@ public final class App {
         BaseRepository.dataSource = dataSource;
         String sql = readResourceFile("schema.sql");
 
-        log.info("SQL: {}", sql);
+        log.info("Executing init DB SQL:\n{}", sql);
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement()) {
             statement.execute(sql);

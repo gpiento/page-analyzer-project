@@ -1,5 +1,7 @@
 @import gg.jte.Content
+@import hexlet.code.dto.BasePage
 @param Content content
+@param BasePage page
 
 <!DOCTYPE html>
 <html lang="en">
@@ -36,21 +38,14 @@
 </nav>
 
 <main class="flex-grow-1">
-<%--
     @if(page != null && page.getFlash() != null)
---%>
-<%--
-        <div class="alert alert-primary alert-dismissible fade show" role="alert">
-            ${page.getFlash()}
-        </div>
---%><%--
-
-        <div class="rounded-0 m-0 alert alert-dismissible fade show alert-success" role="alert">
-            <p class="m-0">Страница успешно добавлена</p>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="rounded-0 m-0 alert alert-dismissible fade show ${page.getFlashType()}"
+             role="alert">
+            <p class="m-0">${page.getFlash()}</p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
         </div>
     @endif
---%>
     <section>
         ${content}
     </section>
