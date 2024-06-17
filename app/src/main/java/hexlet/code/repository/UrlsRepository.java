@@ -19,7 +19,7 @@ public class UrlsRepository extends BaseRepository {
 
     public static Url save(final Url url) throws SQLException {
 
-        String sql = "INSERT INTO URLS (NAME, CREATE_AT) VALUES (?, ?)";
+        String sql = "INSERT INTO urls (name, create_at) VALUES (?, ?)";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql,
