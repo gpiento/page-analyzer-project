@@ -19,14 +19,13 @@ public class UrlsRepository extends BaseRepository {
 
     public static Url save(final Url url) throws SQLException {
 
-        String sql = "INSERT INTO urls (name, create_at) VALUES (?, ?)";
+        String sql = "INSERT INTO urls (name) VALUES (?)";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql,
                      Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, url.getName());
-            preparedStatement.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
             log.info("Executing save to UrlsRepository SQL: {}", sql);
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
@@ -47,15 +46,13 @@ public class UrlsRepository extends BaseRepository {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, findId);
-            log.info("Executing find SQL: {}", sql);
+            log.info("Executing find({}) SQL: {}", findId, sql);
             ResultSet resultSet = stmt.executeQuery();
             if (resultSet.next()) {
                 long id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
                 Timestamp createdAt = resultSet.getTimestamp("create_at");
-                Url url = new Url(name);
-                url.setId(id);
-                url.setCreatedAt(createdAt);
+                Url url = new Url(id, name, createdAt);
                 return Optional.of(url);
             }
             return Optional.empty();
