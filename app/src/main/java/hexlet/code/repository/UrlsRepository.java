@@ -17,7 +17,7 @@ import java.util.Optional;
 @Slf4j
 public class UrlsRepository extends BaseRepository {
 
-    public static Url save(Url url) throws SQLException {
+    public static Url save(final Url url) throws SQLException {
 
         String sql = "INSERT INTO urls (name) VALUES (?)";
 
@@ -38,7 +38,7 @@ public class UrlsRepository extends BaseRepository {
         }
     }
 
-    public static Optional<Url> find(Long findId) throws SQLException {
+    public static Optional<Url> find(final Long findId) throws SQLException {
 
         String sql = "SELECT * FROM urls WHERE id = ?";
 
