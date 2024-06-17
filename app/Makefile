@@ -2,7 +2,7 @@
 .PHONY: build app
 
 setup:
-	./gradlew wrapper --gradle-version 8.6
+	./gradlew wrapper --gradle-version 8.7
 
 clean:
 	./gradlew clean

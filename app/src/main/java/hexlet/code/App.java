@@ -57,16 +57,16 @@ public final class App {
 
     public static Javalin getApp() throws IOException, SQLException {
 
-        log.info("DEVELOPMENT_MODE: {}", isDevelopmentMode());
-        String dbUrl = "";
+        String dbUrl = "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1";
+        String envDbUrl = System.getenv("JDBC_DATABASE_URL");
         HikariConfig hikariConfig = new HikariConfig();
 
-        if (isDevelopmentMode()) {
+        if (envDbUrl == null || envDbUrl.isEmpty()) {
             DriverManager.registerDriver(new org.h2.Driver());
-            dbUrl = "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1";
+            log.info("JDBC_DATABASE_URL not set, using H2 in-memory database");
         } else {
             DriverManager.registerDriver(new org.postgresql.Driver());
-            dbUrl = System.getenv("JDBC_DATABASE_URL");
+            dbUrl = envDbUrl;
             hikariConfig.setUsername(System.getenv("JDBC_DATABASE_USERNAME"));
             hikariConfig.setPassword(System.getenv("JDBC_DATABASE_PASSWORD"));
         }
