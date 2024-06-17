@@ -28,8 +28,10 @@ public class UrlsController {
 
     public static void index(final Context ctx) throws SQLException {
 
-        UrlsPage urlsPage = new UrlsPage(UrlsRepository.getEntities());
-        ctx.render("urls/index.jte", Collections.singletonMap("page", urlsPage));
+        UrlsPage page    = new UrlsPage(UrlsRepository.getEntities());
+        page.setFlash(ctx.consumeSessionAttribute("flash"));
+        page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
+        ctx.render("urls/index.jte", Collections.singletonMap("page", page));
     }
 
     public static void show(final Context ctx) throws SQLException {
