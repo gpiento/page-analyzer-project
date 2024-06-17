@@ -8,16 +8,16 @@ clean:
 	./gradlew clean
 
 build:
-	./gradlew clean build
+	./gradlew build
 
 install:
-	./gradlew clean install
+	./gradlew install
 
 run-dist: install
 	@./build/install/app/bin/app
 
-run: install
-	@./build/install/app/bin/app
+run: build
+	@java -jar ./build/libs/app-1.0-SNAPSHOT-all.jar
 
 test:
 	./gradlew test
@@ -26,7 +26,7 @@ report:
 	./gradlew jacocoTestReport
 
 lint:
-	./gradlew checkstyleMain
+	./gradlew checkstyleMain checkstyleTest
 
 check-deps:
 	./gradlew dependencyUpdates -Drevision=release
