@@ -17,7 +17,7 @@ import java.util.Optional;
 @Slf4j
 public class UrlsRepository extends BaseRepository {
 
-    public static void save(final Url url) throws SQLException {
+    public static void save(Url url) throws SQLException {
 
         String sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
 
@@ -38,7 +38,7 @@ public class UrlsRepository extends BaseRepository {
         }
     }
 
-    public static Optional<Url> findById(final Long findId) throws SQLException {
+    public static Optional<Url> find(Long findId) throws SQLException {
 
         String sql = "SELECT * FROM urls WHERE id = ?";
 
@@ -60,7 +60,7 @@ public class UrlsRepository extends BaseRepository {
         }
     }
 
-    public static boolean existsByName(final String name) throws SQLException {
+    public static boolean existsByName(String name) throws SQLException {
 
         String sql = "SELECT * FROM urls WHERE name = ?";
 
@@ -90,8 +90,8 @@ public class UrlsRepository extends BaseRepository {
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
                 String name = resultSet.getString("name");
-                Url url = new Url(name);
-                url.setId(id);
+                Timestamp createdAt = resultSet.getTimestamp("created_at");
+                Url url = new Url(id, name, createdAt);
                 result.add(url);
             }
             return result;

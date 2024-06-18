@@ -24,21 +24,24 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
+import static io.javalin.rendering.template.TemplateUtil.model;
+
 @Slf4j
 public class UrlsController {
 
-    public static void index(final Context ctx) throws SQLException {
+    public static void index(Context ctx) throws SQLException {
 
-        UrlsPage page = new UrlsPage(UrlsRepository.getEntities());
+        List<Url> urls = UrlsRepository.getEntities();
+        UrlsPage page = new UrlsPage(urls);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
-        ctx.render("urls/index.jte", Collections.singletonMap("page", page));
+        ctx.render("urls/index.jte", model("page", page));
     }
 
-    public static void show(final Context ctx) throws SQLException {
+    public static void show(Context ctx) throws SQLException {
 
         long id = ctx.pathParamAsClass("id", Long.class).get();
-        Url url = UrlsRepository.findById(id)
+        Url url = UrlsRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
         List<UrlCheck> urlCheck = UrlCheckRepository.getEntities(id);
         UrlPage page = new UrlPage(url, urlCheck);
@@ -47,7 +50,7 @@ public class UrlsController {
         ctx.render("urls/show.jte", Collections.singletonMap("page", page));
     }
 
-    public static void create(final Context ctx)
+    public static void create(Context ctx)
             throws SQLException {
 
         String inputUrl = ctx.formParam("url");
@@ -80,12 +83,12 @@ public class UrlsController {
         }
     }
 
-    public static void check(final Context ctx)
+    public static void check(Context ctx)
             throws SQLException {
 
         long id = ctx.pathParamAsClass("id", Long.class).get();
 
-        Url url = UrlsRepository.findById(id)
+        Url url = UrlsRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
 
         HttpResponse<String> httpResponse;

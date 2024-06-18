@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 public class UrlCheckRepository extends BaseRepository {
 
-    public static void saveUrlCheck(final UrlCheck urlCheck) throws SQLException {
+    public static void saveUrlCheck(UrlCheck urlCheck) throws SQLException {
 
         String sql = "INSERT INTO url_checks"
                 + " (url_id, status_code, h1, title, description, created_at)"
@@ -42,7 +42,7 @@ public class UrlCheckRepository extends BaseRepository {
         }
     }
 
-    public static List<UrlCheck> getEntities(final Long urlId) throws SQLException {
+    public static List<UrlCheck> getEntities(Long urlId) throws SQLException {
 
         String sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY created_at DESC";
 
