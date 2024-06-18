@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
@@ -32,7 +33,8 @@ public class UrlsController {
     public static void index(Context ctx) throws SQLException {
 
         List<Url> urls = UrlsRepository.getEntities();
-        UrlsPage page = new UrlsPage(urls);
+        Map<Long, UrlCheck> check = UrlCheckRepository.getLastChecks();
+        UrlsPage page = new UrlsPage(urls, check);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
         ctx.render("urls/index.jte", model("page", page));

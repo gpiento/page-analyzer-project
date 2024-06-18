@@ -10,7 +10,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class UrlCheckRepository extends BaseRepository {
@@ -62,6 +64,31 @@ public class UrlCheckRepository extends BaseRepository {
                 Timestamp createdAt = resultSet.getTimestamp("created_at");
                 UrlCheck urlCheck = new UrlCheck(id, urlId, statusCode, h1, title, description, createdAt);
                 result.add(urlCheck);
+            }
+            return result;
+        }
+    }
+
+    public static Map<Long, UrlCheck> getLastChecks() throws SQLException {
+
+        String sql = "SELECT DISTINCT ON (url_id) * FROM url_checks ORDER BY url_id DESC, id DESC";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            ResultSet resultSet = stmt.executeQuery();
+
+            Map<Long, UrlCheck> result = new HashMap<>();
+            while (resultSet.next()) {
+                Long id = resultSet.getLong("id");
+                Long urlId = resultSet.getLong("url_id");
+                int statusCode = resultSet.getInt("status_code");
+                String h1 = resultSet.getString("h1");
+                String title = resultSet.getString("title");
+                String description = resultSet.getString("description");
+                Timestamp createdAt = resultSet.getTimestamp("created_at");
+                UrlCheck urlCheck = new UrlCheck(id, urlId, statusCode, h1, title, description, createdAt);
+                result.put(urlId, urlCheck);
             }
             return result;
         }
