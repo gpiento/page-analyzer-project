@@ -112,7 +112,7 @@ public class UrlsController {
         Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
         UrlCheck urlCheck = new UrlCheck(urlId, statusCode, h1, title, description, createdAt);
-        UrlCheckRepository.saveUrlCheck(urlCheck);
+        UrlCheckRepository.save(urlCheck);
 
         ctx.sessionAttribute("flash", "Страница успешно проверена");
         ctx.sessionAttribute("flash-type", "alert-success");

@@ -13,11 +13,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 public class UrlCheckRepository extends BaseRepository {
 
-    public static void saveUrlCheck(UrlCheck urlCheck) throws SQLException {
+    public static void save(UrlCheck urlCheck) throws SQLException {
 
         String sql = "INSERT INTO url_checks"
                 + " (url_id, status_code, h1, title, description, created_at)"
@@ -91,6 +92,30 @@ public class UrlCheckRepository extends BaseRepository {
                 result.put(urlId, urlCheck);
             }
             return result;
+        }
+    }
+
+    public static Optional<UrlCheck> getLastCheck(Long urlId) throws SQLException {
+
+        String sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY created_at DESC, url_id DESC LIMIT 1";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, urlId);
+            ResultSet resultSet = stmt.executeQuery();
+
+            UrlCheck result = null;
+            while (resultSet.next()) {
+                Long id = resultSet.getLong("id");
+                int statusCode = resultSet.getInt("status_code");
+                String h1 = resultSet.getString("h1");
+                String title = resultSet.getString("title");
+                String description = resultSet.getString("description");
+                Timestamp createdAt = resultSet.getTimestamp("created_at");
+                result = new UrlCheck(id, urlId, statusCode, h1, title, description, createdAt);
+            }
+            return Optional.ofNullable(result);
         }
     }
 }
