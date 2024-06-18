@@ -17,7 +17,9 @@ public class UrlCheckRepository extends BaseRepository {
 
     public static UrlCheck saveUrlCheck(final UrlCheck urlCheck) throws SQLException {
 
-        String sql = "INSERT INTO url_checks (url_id, status_code, h1, title, description) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO url_checks"
+                + " (url_id, status_code, h1, title, description, created_at)"
+                + " VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql,
@@ -28,7 +30,7 @@ public class UrlCheckRepository extends BaseRepository {
             preparedStatement.setString(3, urlCheck.getH1());
             preparedStatement.setString(4, urlCheck.getTitle());
             preparedStatement.setString(5, urlCheck.getDescription());
-            log.info("Executing save to UrlCheckRepository SQL: {}", sql);
+            preparedStatement.setTimestamp(6, urlCheck.getCreatedAt());
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -48,7 +50,6 @@ public class UrlCheckRepository extends BaseRepository {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, urlId);
-            log.info("Executing getEntities SQL: {}", sql);
             ResultSet resultSet = stmt.executeQuery();
 
             List<UrlCheck> result = new ArrayList<>();

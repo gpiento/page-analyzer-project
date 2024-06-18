@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class UrlsController {
             ctx.sessionAttribute("flash-type", "alert-danger");
             ctx.redirect(NamedRoutes.rootPath());
         } else {
-            Url url = new Url(normalUrl);
+            Url url = new Url(normalUrl, new Timestamp(System.currentTimeMillis()));
             UrlsRepository.saveUrl(url);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
             ctx.sessionAttribute("flash-type", "alert-success");
@@ -99,13 +100,14 @@ public class UrlsController {
         int statusCode = httpResponse.getStatus();
         String body = httpResponse.getBody();
         Document document = Jsoup.parse(body);
+        long urlId = url.getId();
         String h1 = document.select("h1").text();
         String title = document.title();
         String description = document.select("meta[name=description]").attr("content");
+        Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
-        UrlCheck urlCheck = new UrlCheck(statusCode, h1, title, description);
-        urlCheck.setUrlId(id);
-        UrlCheck savedUrlCheck = UrlCheckRepository.saveUrlCheck(urlCheck);
+        UrlCheck urlCheck = new UrlCheck(urlId, statusCode, h1, title, description, createdAt);
+        UrlCheckRepository.saveUrlCheck(urlCheck);
 
         ctx.sessionAttribute("flash", "Страница успешно проверена");
         ctx.sessionAttribute("flash-type", "alert-success");
