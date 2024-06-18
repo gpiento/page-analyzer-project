@@ -20,7 +20,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,7 +71,7 @@ public class UrlsController {
             ctx.sessionAttribute("flash-type", "alert-danger");
             ctx.redirect(NamedRoutes.rootPath());
         } else {
-            Url url = new Url(normalUrl, new Timestamp(System.currentTimeMillis()));
+            Url url = new Url(normalUrl);
             UrlsRepository.saveUrl(url);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
             ctx.sessionAttribute("flash-type", "alert-success");
