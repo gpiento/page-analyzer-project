@@ -163,16 +163,4 @@ public final class AppTest {
         });
     }
 
-    @Test
-    public void testCheckFakeUrl() {
-        JavalinTest.test(app, (server, client) -> {
-            String fakeWebsite = "http://localhost:7070";
-            client.post("/urls", "url=" + fakeWebsite);
-
-            /*var urlId =UrlsRepository.findByName(fakeWebsite).getId();
-            client.post(String.format("/urls/%s/checks", urlId));
-
-            assertThat(UrlCheckRepository.getEntitiesById(urlId)).isEmpty();*/
-        });
-    }
 }
