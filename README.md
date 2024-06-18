@@ -7,7 +7,21 @@
 
 Page Analyzer is a site that analyzes specified pages for SEO suitability. The fourth project is a full-fledged website based on the Javalin framework. Here we practice the basic principles of building modern sites on MVC-architecture: working with routing, request handlers and templating, interaction with the database via ORM.
 
-### Technologies and frameworks used:
+Demo: https://java-project-72-6q5p.onrender.com
+
+### Requirements
+
+* Java 21
+* Gradle 8.7
+
+### Usage
+
+```bash
+make run
+```
+Open in browser: http://localhost:7070
+
+### Technologies and frameworks used in project:
 - Language Java
 - Gradle Build Tool
 - Javalin web framework
