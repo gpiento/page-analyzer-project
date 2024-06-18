@@ -85,7 +85,7 @@ public class AppTest {
     @Test
     public void testDoubleAddPage() throws SQLException {
         Url url = new Url("https://www.google.com", new Timestamp(System.currentTimeMillis()));
-        UrlsRepository.save(url);
+        UrlsRepository.saveUrl(url);
         JavalinTest.test(app, (server, client) -> {
             String requestBody = "url=https://www.google.com";
             Response response = client.post(NamedRoutes.urlsPath(), requestBody);
@@ -99,7 +99,7 @@ public class AppTest {
     @Test
     public void testSavePage() throws SQLException {
         var url = new Url("https://www.google.com", new Timestamp(System.currentTimeMillis()));
-        UrlsRepository.save(url);
+        UrlsRepository.saveUrl(url);
         JavalinTest.test(app, (server, client) -> {
             Response response = client.get(NamedRoutes.urlPath(url.getId()));
             assertThat(response.code()).isEqualTo(200);
@@ -139,7 +139,7 @@ public class AppTest {
     @Test
     public void testCheckUrl() throws SQLException {
         Url url = new Url(urlName, new Timestamp(System.currentTimeMillis()));
-        UrlsRepository.save(url);
+        UrlsRepository.saveUrl(url);
 
         JavalinTest.test(app, (server, client) -> {
             Response response = client.post(NamedRoutes.urlCheckPath(url.getId()));

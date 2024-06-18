@@ -17,16 +17,16 @@ import java.util.Optional;
 @Slf4j
 public class UrlsRepository extends BaseRepository {
 
-    public static Url save(final Url url) throws SQLException {
+    public static Url saveUrl(final Url url) throws SQLException {
 
-        String sql = "INSERT INTO urls (name) VALUES (?)";
+        String sql = "INSERT INTO urls (name, create_at) VALUES (?, ?)";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql,
                      Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, url.getName());
-            log.info("Executing save to UrlsRepository SQL: {}", sql);
+            preparedStatement.setTimestamp(2, url.getCreatedAt());
             preparedStatement.executeUpdate();
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
@@ -47,8 +47,8 @@ public class UrlsRepository extends BaseRepository {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, findId);
-            log.info("Executing find({}) SQL: {}", findId, sql);
             ResultSet resultSet = stmt.executeQuery();
+
             if (resultSet.next()) {
                 long id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
@@ -56,6 +56,7 @@ public class UrlsRepository extends BaseRepository {
                 Url url = new Url(id, name, createdAt);
                 return Optional.of(url);
             }
+
             return Optional.empty();
         }
     }
@@ -68,7 +69,6 @@ public class UrlsRepository extends BaseRepository {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, name);
-            log.info("Executing exitsByName SQL: {}", sql);
             ResultSet resultSet = stmt.executeQuery();
             if (resultSet.next()) {
                 if (resultSet.getString("name").equals(name)) {
@@ -86,7 +86,6 @@ public class UrlsRepository extends BaseRepository {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            log.info("Executing getEntities SQL: {}", sql);
             ResultSet resultSet = stmt.executeQuery();
             List<Url> result = new ArrayList<>();
             while (resultSet.next()) {

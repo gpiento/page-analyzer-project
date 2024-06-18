@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 public class UrlCheckRepository extends BaseRepository {
 
-    public static UrlCheck save(final UrlCheck urlCheck) throws SQLException {
+    public static UrlCheck saveUrlCheck(final UrlCheck urlCheck) throws SQLException {
 
         String sql = "INSERT INTO url_checks (url_id, status_code, h1, title, description) VALUES (?, ?, ?, ?, ?)";
 

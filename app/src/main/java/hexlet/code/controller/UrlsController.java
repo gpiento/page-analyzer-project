@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class UrlsController {
 
     public static void index(final Context ctx) throws SQLException {
 
-        UrlsPage page    = new UrlsPage(UrlsRepository.getEntities());
+        UrlsPage page = new UrlsPage(UrlsRepository.getEntities());
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
         ctx.render("urls/index.jte", Collections.singletonMap("page", page));
@@ -71,8 +72,8 @@ public class UrlsController {
             ctx.sessionAttribute("flash-type", "alert-danger");
             ctx.redirect(NamedRoutes.rootPath());
         } else {
-            Url url = new Url(normalUrl);
-            UrlsRepository.save(url);
+            Url url = new Url(normalUrl, new Timestamp(System.currentTimeMillis()));
+            UrlsRepository.saveUrl(url);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
             ctx.sessionAttribute("flash-type", "alert-success");
             ctx.redirect(NamedRoutes.urlsPath());
@@ -87,7 +88,7 @@ public class UrlsController {
         Url url = UrlsRepository.findById(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
 
-        HttpResponse<String> httpResponse = null;
+        HttpResponse<String> httpResponse;
         try {
             httpResponse = Unirest.get(url.getName()).asString();
         } catch (Exception e) {
@@ -105,7 +106,7 @@ public class UrlsController {
 
         UrlCheck urlCheck = new UrlCheck(statusCode, h1, title, description);
         urlCheck.setUrlId(id);
-        UrlCheck savedUrlCheck = UrlCheckRepository.save(urlCheck);
+        UrlCheck savedUrlCheck = UrlCheckRepository.saveUrlCheck(urlCheck);
 
         ctx.sessionAttribute("flash", "Страница успешно проверена");
         ctx.sessionAttribute("flash-type", "alert-success");
