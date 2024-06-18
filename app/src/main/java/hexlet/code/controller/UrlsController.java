@@ -37,7 +37,7 @@ public class UrlsController {
     public static void show(final Context ctx) throws SQLException {
 
         long id = ctx.pathParamAsClass("id", Long.class).get();
-        Url url = UrlsRepository.find(id)
+        Url url = UrlsRepository.findById(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
         List<UrlCheck> urlCheck = UrlCheckRepository.getEntities(id);
         UrlPage page = new UrlPage(url, urlCheck);
@@ -70,7 +70,6 @@ public class UrlsController {
             ctx.sessionAttribute("flash", "Страница уже существует");
             ctx.sessionAttribute("flash-type", "alert-danger");
             ctx.redirect(NamedRoutes.rootPath());
-            return;
         } else {
             Url url = new Url(normalUrl);
             UrlsRepository.save(url);
@@ -85,7 +84,7 @@ public class UrlsController {
 
         long id = ctx.pathParamAsClass("id", Long.class).get();
 
-        Url url = UrlsRepository.find(id)
+        Url url = UrlsRepository.findById(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
 
         HttpResponse<String> httpResponse = null;

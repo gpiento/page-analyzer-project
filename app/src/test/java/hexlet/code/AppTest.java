@@ -49,12 +49,13 @@ public class AppTest {
 
     @BeforeEach
     public void beforeEach() throws SQLException, IOException {
-        app = App.getApp();
 
+        app = App.getApp();
     }
 
     @Test
     public void testRootPage() {
+
         JavalinTest.test(app, (server, client) -> {
             Response response = client.get(NamedRoutes.rootPath());
             assertThat(response.code()).isEqualTo(200);

@@ -28,6 +28,7 @@ public class UrlsRepository extends BaseRepository {
             preparedStatement.setString(1, url.getName());
             log.info("Executing save to UrlsRepository SQL: {}", sql);
             preparedStatement.executeUpdate();
+
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 url.setId(generatedKeys.getLong(1));
@@ -38,7 +39,7 @@ public class UrlsRepository extends BaseRepository {
         }
     }
 
-    public static Optional<Url> find(final Long findId) throws SQLException {
+    public static Optional<Url> findById(final Long findId) throws SQLException {
 
         String sql = "SELECT * FROM urls WHERE id = ?";
 
