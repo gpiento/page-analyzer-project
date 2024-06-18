@@ -4,7 +4,7 @@
 @import java.time.format.DateTimeFormatter
 @param UrlsPage page
 
-!{var formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");}
+!{DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");}
 
 @template.layout.page(page = page, content = @`
     <div class="container-lg mt-5">

@@ -23,7 +23,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AppTest {
+public final class AppTest {
 
     private static final String HTML_PATH = "src/test/resources/test.html";
     private static Javalin app;
