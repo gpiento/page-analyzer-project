@@ -73,7 +73,7 @@ public class UrlsController {
             ctx.redirect(NamedRoutes.rootPath());
         } else {
             Url url = new Url(normalUrl, new Timestamp(System.currentTimeMillis()));
-            UrlsRepository.saveUrl(url);
+            UrlsRepository.save(url);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
             ctx.sessionAttribute("flash-type", "alert-success");
             ctx.redirect(NamedRoutes.urlsPath());

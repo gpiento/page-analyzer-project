@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 public class UrlCheckRepository extends BaseRepository {
 
-    public static UrlCheck saveUrlCheck(final UrlCheck urlCheck) throws SQLException {
+    public static void saveUrlCheck(final UrlCheck urlCheck) throws SQLException {
 
         String sql = "INSERT INTO url_checks"
                 + " (url_id, status_code, h1, title, description, created_at)"
@@ -32,10 +32,10 @@ public class UrlCheckRepository extends BaseRepository {
             preparedStatement.setString(5, urlCheck.getDescription());
             preparedStatement.setTimestamp(6, urlCheck.getCreatedAt());
             preparedStatement.executeUpdate();
+
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 urlCheck.setId(generatedKeys.getLong(1));
-                return urlCheck;
             } else {
                 throw new SQLException("DB have not returned an id after saving an entity");
             }

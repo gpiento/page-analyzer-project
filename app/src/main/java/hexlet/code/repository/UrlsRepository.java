@@ -17,7 +17,7 @@ import java.util.Optional;
 @Slf4j
 public class UrlsRepository extends BaseRepository {
 
-    public static Url saveUrl(final Url url) throws SQLException {
+    public static void save(final Url url) throws SQLException {
 
         String sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
 
@@ -32,7 +32,6 @@ public class UrlsRepository extends BaseRepository {
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 url.setId(generatedKeys.getLong(1));
-                return url;
             } else {
                 throw new SQLException("DB have not returned an id after saving an entity");
             }

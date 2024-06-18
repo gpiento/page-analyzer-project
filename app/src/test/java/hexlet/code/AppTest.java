@@ -15,9 +15,11 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,8 +31,8 @@ public class AppTest {
     private static String urlName;
 
     public static String getContentOfHtmlFile() throws IOException {
-        var path = Paths.get(HTML_PATH);
-        var lines = Files.readAllLines(path);
+        Path path = Paths.get(HTML_PATH);
+        List<String> lines = Files.readAllLines(path);
         return String.join("\n", lines);
     }
 
@@ -66,7 +68,7 @@ public class AppTest {
     @Test
     public void testUrlsPath() {
         JavalinTest.test(app, (server, client) -> {
-            var response = client.get(NamedRoutes.urlsPath());
+            Response response = client.get(NamedRoutes.urlsPath());
             assertThat(response.code()).isEqualTo(200);
         });
     }
@@ -74,8 +76,8 @@ public class AppTest {
     @Test
     public void testAddPage() {
         JavalinTest.test(app, (server, client) -> {
-            var requestBody = "url=https://www.google.com";
-            var response = client.post(NamedRoutes.urlsPath(), requestBody);
+            String requestBody = "url=https://www.google.com";
+            Response response = client.post(NamedRoutes.urlsPath(), requestBody);
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("https://www.google.com");
             assertThat(UrlsRepository.getEntities()).hasSize(1);
@@ -85,7 +87,7 @@ public class AppTest {
     @Test
     public void testDoubleAddPage() throws SQLException {
         Url url = new Url("https://www.google.com", new Timestamp(System.currentTimeMillis()));
-        UrlsRepository.saveUrl(url);
+        UrlsRepository.save(url);
         JavalinTest.test(app, (server, client) -> {
             String requestBody = "url=https://www.google.com";
             Response response = client.post(NamedRoutes.urlsPath(), requestBody);
@@ -98,8 +100,8 @@ public class AppTest {
 
     @Test
     public void testSavePage() throws SQLException {
-        var url = new Url("https://www.google.com", new Timestamp(System.currentTimeMillis()));
-        UrlsRepository.saveUrl(url);
+        Url url = new Url("https://www.google.com", new Timestamp(System.currentTimeMillis()));
+        UrlsRepository.save(url);
         JavalinTest.test(app, (server, client) -> {
             Response response = client.get(NamedRoutes.urlPath(url.getId()));
             assertThat(response.code()).isEqualTo(200);
@@ -109,7 +111,7 @@ public class AppTest {
     @Test
     public void testBadRequest() {
         JavalinTest.test(app, (server, client) -> {
-            var response = client.get(NamedRoutes.urlPath("bad request"));
+            Response response = client.get(NamedRoutes.urlPath("bad request"));
             assertThat(response.code()).isEqualTo(400);
         });
     }
@@ -117,7 +119,7 @@ public class AppTest {
     @Test
     public void testUrlNotExists() {
         JavalinTest.test(app, (server, client) -> {
-            var response = client.get("\\nonexistable");
+            Response response = client.get("\\nonexistable");
             assertThat(response.code()).isEqualTo(404);
         });
     }
@@ -125,12 +127,12 @@ public class AppTest {
     @Test
     public void testEntities() {
         JavalinTest.test(app, (server, client) -> {
-            var requestBody = "url=https://www.dzen.ru";
-            var response = client.post(NamedRoutes.urlsPath(), requestBody);
+            String requestBody = "url=https://www.dzen.ru";
+            Response response = client.post(NamedRoutes.urlsPath(), requestBody);
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("https://www.dzen.ru");
             assertThat(UrlsRepository.getEntities()).hasSize(1);
-            var response2 = client.get(NamedRoutes.urlPath("1"));
+            Response response2 = client.get(NamedRoutes.urlPath("1"));
             assertThat(response2.code()).isEqualTo(200);
             assertThat(response2.body().string()).contains("https://www.dzen.ru");
         });
@@ -139,7 +141,7 @@ public class AppTest {
     @Test
     public void testCheckUrl() throws SQLException {
         Url url = new Url(urlName, new Timestamp(System.currentTimeMillis()));
-        UrlsRepository.saveUrl(url);
+        UrlsRepository.save(url);
 
         JavalinTest.test(app, (server, client) -> {
             Response response = client.post(NamedRoutes.urlCheckPath(url.getId()));
@@ -159,7 +161,7 @@ public class AppTest {
     @Test
     public void testCheckFakeUrl() {
         JavalinTest.test(app, (server, client) -> {
-            var fakeWebsite = "http://localhost:7070";
+            String fakeWebsite = "http://localhost:7070";
             client.post("/urls", "url=" + fakeWebsite);
 
             /*var urlId =UrlsRepository.findByName(fakeWebsite).getId();
