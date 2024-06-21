@@ -20,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,7 +90,7 @@ public final class AppTest {
     @Test
     public void testDoubleAddPage() throws SQLException {
 
-        Url url = new Url("https://www.google.com", new Timestamp(System.currentTimeMillis()));
+        Url url = new Url("https://www.google.com");
         UrlsRepository.save(url);
         JavalinTest.test(app, (server, client) -> {
             String requestBody = "url=https://www.google.com";
@@ -105,7 +104,7 @@ public final class AppTest {
 
     @Test
     public void testSavePage() throws SQLException {
-        Url url = new Url("https://www.google.com", new Timestamp(System.currentTimeMillis()));
+        Url url = new Url("https://www.google.com");
         UrlsRepository.save(url);
         JavalinTest.test(app, (server, client) -> {
             Response response = client.get(NamedRoutes.urlPath(url.getId()));
@@ -145,7 +144,7 @@ public final class AppTest {
 
     @Test
     public void testCheckUrl() throws SQLException {
-        Url url = new Url(urlName, new Timestamp(System.currentTimeMillis()));
+        Url url = new Url(urlName);
         UrlsRepository.save(url);
 
         JavalinTest.test(app, (server, client) -> {
@@ -162,5 +161,4 @@ public final class AppTest {
             assertThat(description).isEqualTo("content description");
         });
     }
-
 }

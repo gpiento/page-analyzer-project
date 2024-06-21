@@ -20,9 +20,4 @@ public final class Url {
     public Url(final String name) {
         this.name = name;
     }
-
-    public Url(final String name, final Timestamp createdAt) {
-        this.name = name;
-        this.createdAt = createdAt;
-    }
 }

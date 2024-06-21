@@ -10,19 +10,19 @@ public class NamedRoutes {
         return "/urls";
     }
 
-    public static String urlPath(String id) {
+    public static String urlPath(final String id) {
         return urlsPath() + "/" + id;
     }
 
-    public static String urlPath(Long id) {
+    public static String urlPath(final Long id) {
         return urlsPath() + "/" + id;
     }
 
-    public static String urlCheckPath(String id) {
+    public static String urlCheckPath(final String id) {
         return urlsPath() + "/" + id + "/checks";
     }
 
-    public static String urlCheckPath(Long id) {
+    public static String urlCheckPath(final Long id) {
         return urlsPath() + "/" + id + "/checks";
     }
 }

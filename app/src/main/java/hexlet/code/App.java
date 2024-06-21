@@ -43,6 +43,7 @@ public final class App {
     private static String getDriverClassName(final String dbUrl) {
 
         log.info("JDBC_DATABASE_DRIVER: {}", dbUrl.contains("postgresql") ? "org.postgresql.Driver" : "org.h2.Driver");
+
         return dbUrl.contains("postgresql") ? "org.postgresql.Driver" : "org.h2.Driver";
     }
 

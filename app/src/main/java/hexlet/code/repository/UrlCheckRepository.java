@@ -18,7 +18,7 @@ import java.util.Optional;
 @Slf4j
 public class UrlCheckRepository extends BaseRepository {
 
-    public static void save(UrlCheck urlCheck) throws SQLException {
+    public static void save(final UrlCheck urlCheck) throws SQLException {
 
         String sql = "INSERT INTO url_checks"
                 + " (url_id, status_code, h1, title, description, created_at)"
@@ -33,7 +33,7 @@ public class UrlCheckRepository extends BaseRepository {
             preparedStatement.setString(3, urlCheck.getH1());
             preparedStatement.setString(4, urlCheck.getTitle());
             preparedStatement.setString(5, urlCheck.getDescription());
-            preparedStatement.setTimestamp(6, urlCheck.getCreatedAt());
+            preparedStatement.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
             preparedStatement.executeUpdate();
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
@@ -45,7 +45,7 @@ public class UrlCheckRepository extends BaseRepository {
         }
     }
 
-    public static List<UrlCheck> getEntities(Long urlId) throws SQLException {
+    public static List<UrlCheck> getEntities(final Long urlId) throws SQLException {
 
         String sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY created_at DESC";
 
@@ -95,7 +95,7 @@ public class UrlCheckRepository extends BaseRepository {
         }
     }
 
-    public static Optional<UrlCheck> getLastCheck(Long urlId) throws SQLException {
+    public static Optional<UrlCheck> getLastCheck(final Long urlId) throws SQLException {
 
         String sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY created_at DESC, url_id DESC LIMIT 1";
 
@@ -115,6 +115,7 @@ public class UrlCheckRepository extends BaseRepository {
                 Timestamp createdAt = resultSet.getTimestamp("created_at");
                 result = new UrlCheck(id, urlId, statusCode, h1, title, description, createdAt);
             }
+
             return Optional.ofNullable(result);
         }
     }

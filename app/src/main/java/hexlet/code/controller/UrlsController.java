@@ -30,7 +30,7 @@ import static io.javalin.rendering.template.TemplateUtil.model;
 @Slf4j
 public class UrlsController {
 
-    public static void index(Context ctx) throws SQLException {
+    public static void index(final Context ctx) throws SQLException {
 
         List<Url> urls = UrlsRepository.getEntities();
         Map<Long, UrlCheck> check = UrlCheckRepository.getLastChecks();
@@ -40,7 +40,7 @@ public class UrlsController {
         ctx.render("urls/index.jte", model("page", page));
     }
 
-    public static void show(Context ctx) throws SQLException {
+    public static void show(final Context ctx) throws SQLException {
 
         long id = ctx.pathParamAsClass("id", Long.class).get();
         Url url = UrlsRepository.find(id)
@@ -52,7 +52,7 @@ public class UrlsController {
         ctx.render("urls/show.jte", Collections.singletonMap("page", page));
     }
 
-    public static void create(Context ctx)
+    public static void create(final Context ctx)
             throws SQLException {
 
         String inputUrl = ctx.formParam("url");
@@ -77,7 +77,7 @@ public class UrlsController {
             ctx.sessionAttribute("flash-type", "alert-danger");
             ctx.redirect(NamedRoutes.rootPath());
         } else {
-            Url url = new Url(normalUrl, new Timestamp(System.currentTimeMillis()));
+            Url url = new Url(normalUrl);
             UrlsRepository.save(url);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
             ctx.sessionAttribute("flash-type", "alert-success");
@@ -85,7 +85,7 @@ public class UrlsController {
         }
     }
 
-    public static void check(Context ctx)
+    public static void check(final Context ctx)
             throws SQLException {
 
         long id = ctx.pathParamAsClass("id", Long.class).get();
@@ -111,7 +111,7 @@ public class UrlsController {
         String description = document.select("meta[name=description]").attr("content");
         Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
-        UrlCheck urlCheck = new UrlCheck(urlId, statusCode, h1, title, description, createdAt);
+        UrlCheck urlCheck = new UrlCheck(urlId, statusCode, h1, title, description);
         UrlCheckRepository.save(urlCheck);
 
         ctx.sessionAttribute("flash", "Страница успешно проверена");

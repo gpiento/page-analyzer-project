@@ -23,19 +23,15 @@ public class UrlCheck {
     private String description;
     private Timestamp createdAt;
 
-    public UrlCheck(int statusCode, String h1, String title, String description) {
-        this.statusCode = statusCode;
-        this.h1 = h1;
-        this.title = title;
-        this.description = description;
-    }
-
-    public UrlCheck(long urlId, int statusCode, String h1, String title, String description, Timestamp createdAt) {
+    public UrlCheck(final long urlId,
+                    final int statusCode,
+                    final String h1,
+                    final String title,
+                    final String description) {
         this.urlId = urlId;
         this.statusCode = statusCode;
         this.h1 = h1;
         this.title = title;
         this.description = description;
-        this.createdAt = createdAt;
     }
 }
