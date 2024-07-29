@@ -58,7 +58,8 @@ public final class App {
     private static TemplateEngine createTemplateEngine() {
 
         ClassLoader classLoader = App.class.getClassLoader();
-        ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
+        ResourceCodeResolver codeResolver = new ResourceCodeResolver(
+                "templates", classLoader);
 
         return TemplateEngine.create(codeResolver, ContentType.Html);
     }
@@ -69,7 +70,7 @@ public final class App {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName(getDriverClassName(dbUrl));
         hikariConfig.setJdbcUrl(dbUrl);
-        log.info("JDBC_DATABASE_URL: {}", dbUrl);
+        //log.info("JDBC_DATABASE_URL: {}", dbUrl);
 
         BaseRepository.dataSource = new HikariDataSource(hikariConfig);
         String sql = readResourceFile("schema.sql");
